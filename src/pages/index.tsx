@@ -1,56 +1,43 @@
-import {
-  Link as ChakraLink,
-  Text,
-  Code,
-  List,
-  ListIcon,
-  ListItem,
-} from '@chakra-ui/core'
-import { CheckCircleIcon, LinkIcon } from '@chakra-ui/icons'
+import { Button, Flex, Heading, HStack, Input } from "@chakra-ui/core";
+import { useRouter } from "next/router";
+import React from "react";
+import { DarkModeSwitch } from "../components/DarkModeSwitch";
 
-import { Hero } from '../components/Hero'
-import { Container } from '../components/Container'
-import { Main } from '../components/Main'
-import { DarkModeSwitch } from '../components/DarkModeSwitch'
-import { CTA } from '../components/CTA'
-import { Footer } from '../components/Footer'
+interface indexProps {}
 
-const Index = () => (
-  <Container height="100vh">
-    <Hero />
-    <Main>
-      <Text>
-        Example repository of <Code>Next.js</Code> + <Code>chakra-ui</Code> +{' '}
-        <Code>typescript</Code>.
-      </Text>
-
-      <List spacing={3} my={0}>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          <ChakraLink
-            isExternal
-            href="https://chakra-ui.com"
-            flexGrow={1}
-            mr={2}
+export const Index: React.FC<indexProps> = ({}) => {
+  const router = useRouter();
+  return (
+    <>
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="flex-start"
+        mt="20vh"
+      >
+        <Flex justify="center">
+          <Heading fontSize="10vh">Galactus 🚀</Heading>
+        </Flex>
+        <Heading fontSize="2vh" mt={5}>
+          A synchronized video experience.
+        </Heading>
+        <HStack mt={10}>
+          <Button
+            colorScheme="teal"
+            w="150px"
+            onClick={() => router.push("/room")}
           >
-            Chakra UI <LinkIcon />
-          </ChakraLink>
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          <ChakraLink isExternal href="https://nextjs.org" flexGrow={1} mr={2}>
-            Next.js <LinkIcon />
-          </ChakraLink>
-        </ListItem>
-      </List>
-    </Main>
+            New Room
+          </Button>
+          <Input placeholder="Enter a code or link" variant="filled" />
+          <Button colorScheme="teal" variant="ghost" disabled={true}>
+            Join
+          </Button>
+        </HStack>
+      </Flex>
+      <DarkModeSwitch />
+    </>
+  );
+};
 
-    <DarkModeSwitch />
-    <Footer>
-      <Text>Next ❤️ Chakra</Text>
-    </Footer>
-    <CTA />
-  </Container>
-)
-
-export default Index
+export default Index;
