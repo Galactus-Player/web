@@ -1,28 +1,28 @@
-import { Flex, Heading } from "@chakra-ui/core";
+import { Box, Flex, Heading, Stack } from "@chakra-ui/core";
 import React from "react";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { NavBar } from "../components/general/Navbar";
+import VideoPlayer from "../components/VideoPlayer/VideoPlayer";
 
 interface roomProps {}
 
 export const Room: React.FC<roomProps> = ({}) => {
   return (
     <>
+      <NavBar />
       <Flex
         direction="column"
         alignItems="center"
-        justifyContent="flex-start"
+        // justifyContent="flex-start"
         mt={10}
       >
-        <Flex justify="center" mb={5}>
-          <Heading fontSize="5vh">Room ABCDE</Heading>
-        </Flex>
-        <iframe
-          width="1700"
-          height="800"
-          src="https://www.youtube.com/embed/y8OnoxKotPQ"
-        ></iframe>
+        <Box width="70%" height="100%">
+          <Stack>
+            <VideoPlayer />
+          </Stack>
+        </Box>
       </Flex>
-      <DarkModeSwitch />
+      {/* <DarkModeSwitch /> */}
     </>
   );
 };
