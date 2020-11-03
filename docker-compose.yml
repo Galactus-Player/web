@@ -1,0 +1,26 @@
+version: "3"
+services:
+  reverseproxy:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    network_mode: host
+    restart: always
+
+  room:
+    image: rjected/galactusroom
+    depends_on:
+      - reverseproxy
+    network_mode: host
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - reverseproxy
+    network_mode: host
+    restart: always
