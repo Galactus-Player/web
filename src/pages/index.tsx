@@ -30,7 +30,6 @@ export const Index: React.FC<indexProps> = ({}) => {
             onClick={() => {
               const newRoomPromise = roomApi.addRoom();
               newRoomPromise.then(room => {
-                console.log("room id: " + room.code);
                 router.push("/room?code=" + room.code);
               }).catch(error => {
                 alert(error.message)
