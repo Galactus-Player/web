@@ -1,12 +1,17 @@
-import { Box, Flex, Heading, Stack } from "@chakra-ui/core";
+import { Box, Flex, Heading, Stack, Text } from "@chakra-ui/core";
 import React from "react";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { NavBar } from "../components/general/Navbar";
 import VideoPlayer from "../components/VideoPlayer/VideoPlayer";
+import { useRouter } from "next/router";
 
 interface roomProps {}
 
 export const Room: React.FC<roomProps> = ({}) => {
+  const {
+    query: { code },
+  } = useRouter();
+  const codestr = code?.toString();
   return (
     <>
       <NavBar />
@@ -18,6 +23,9 @@ export const Room: React.FC<roomProps> = ({}) => {
       >
         <Box width="70%" height="100%">
           <Stack>
+            <Text textAlign="center">
+              You are in room {codestr}!
+            </Text>
             <VideoPlayer />
           </Stack>
         </Box>
