@@ -6,14 +6,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - 80:80
-    network_mode: host
     restart: always
 
   room:
     image: rjected/galactusroom
     depends_on:
       - reverseproxy
-    network_mode: host
     restart: always
 
   web:
@@ -22,5 +20,4 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - reverseproxy
-    network_mode: host
     restart: always
