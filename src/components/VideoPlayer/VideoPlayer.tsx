@@ -64,9 +64,13 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   };
 
   // TODO(issue) connect all callbacks to the sync service.
-  handlePlay = () => {};
+  handlePlay = () => {
+    this.setState({ playing: true });
+  };
 
-  handlePause = () => {};
+  handlePause = () => {
+    this.setState({ playing: false });
+  };
 
   handleSeek = () => {};
 
