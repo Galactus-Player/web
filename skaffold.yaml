@@ -1,0 +1,18 @@
+apiVersion: skaffold/v2beta9
+kind: Config
+metadata:
+  name: web
+build:
+  artifacts:
+  - image: rjected/galactusnginx
+    context: nginx
+    docker:
+      dockerfile: ./Dockerfile
+      network: host
+deploy:
+  kubectl:
+    manifests:
+    - reverseproxy-deployment.yaml
+    - reverseproxy-service.yaml
+    - room-deployment.yaml
+    - web-deployment.yaml

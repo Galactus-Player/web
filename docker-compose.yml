@@ -1,9 +1,7 @@
 version: "3"
 services:
   reverseproxy:
-    build:
-      context: ./nginx/
-      dockerfile: Dockerfile
+    image: rjected/galactusnginx
     ports:
       - 80:80
     restart: always
@@ -15,9 +13,7 @@ services:
     restart: always
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: rjected/galactusweb
     depends_on:
       - reverseproxy
     restart: always
