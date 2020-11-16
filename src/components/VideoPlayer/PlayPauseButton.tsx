@@ -1,4 +1,6 @@
-import { Button } from "@chakra-ui/core";
+import { Button, IconButton } from "@chakra-ui/core";
+import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
+
 import React from "react";
 
 interface PlayPauseButtonProps {
@@ -13,9 +15,25 @@ export const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({
   return (
     <>
       {playing ? (
-        <Button onClick={onClick}>Pause</Button>
+        <IconButton
+          // variant="outline"
+          colorScheme="teal"
+          isRound={true}
+          aria-label="Call Sage"
+          onClick={onClick}
+          fontSize="20px"
+          icon={<AiFillPauseCircle />}
+        />
       ) : (
-        <Button onClick={onClick}>Play</Button>
+        <IconButton
+          isRound={true}
+          // variant="outline"
+          colorScheme="teal"
+          aria-label="Call Sage"
+          onClick={onClick}
+          fontSize="20px"
+          icon={<AiFillPlayCircle />}
+        />
       )}
     </>
   );

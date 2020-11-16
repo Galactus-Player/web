@@ -1,6 +1,6 @@
 import { Button, Flex, Heading, HStack, Input } from "@chakra-ui/core";
 import { useRouter } from "next/router";
-import { RoomApi } from "../api/room/index"
+import { RoomApi } from "../api/room/index";
 import React from "react";
 import { DarkModeSwitch } from "../components/DarkModeSwitch";
 
@@ -29,11 +29,13 @@ export const Index: React.FC<indexProps> = ({}) => {
             w="150px"
             onClick={() => {
               const newRoomPromise = roomApi.addRoom();
-              newRoomPromise.then(room => {
-                router.push("/room?code=" + room.code);
-              }).catch(error => {
-                alert(error.message)
-              });
+              newRoomPromise
+                .then((room) => {
+                  router.push("/room?code=" + room.code);
+                })
+                .catch((error) => {
+                  alert(error.message);
+                });
             }}
           >
             New Room
@@ -44,7 +46,6 @@ export const Index: React.FC<indexProps> = ({}) => {
           </Button>
         </HStack>
       </Flex>
-      <DarkModeSwitch />
     </>
   );
 };

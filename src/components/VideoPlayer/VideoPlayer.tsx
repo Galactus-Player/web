@@ -16,6 +16,7 @@ import ReactPlayer from "react-player";
 import { InputField } from "../general/InputField";
 import { PlayPauseButton } from "./PlayPauseButton";
 import { VideoQueue } from "./VideoQueue";
+import { Duration } from "./Duration";
 
 type VideoPlayerProps = {};
 
@@ -23,6 +24,7 @@ type VideoPlayerState = {
   playing: boolean;
   seeking: boolean;
   played: number;
+  duration: number;
   url: string;
   videoUrlQueue: string[];
 };
@@ -40,6 +42,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     playing: false,
     seeking: false,
     played: 0,
+    duration: 0,
     url: "",
     videoUrlQueue: [],
   };
@@ -63,6 +66,10 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     this.setState({ played: state.played * 100 });
   };
 
+  handleDuration = (duration: number) => {
+    this.setState({ duration });
+  };
+
   // TODO(issue) connect all callbacks to the sync service.
   handlePlay = () => {
     this.setState({ playing: true });
@@ -79,7 +86,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   };
 
   render() {
-    const { playing, seeking, played, url, videoUrlQueue } = this.state;
+    const { playing, duration, played, url, videoUrlQueue } = this.state;
     return (
       <>
         <Stack justify="space-between" align="stretch">
@@ -124,11 +131,13 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
             )}
           </Formik>
           {this.state.url === "" ? (
-            <Box width="100%" height="750px" borderWidth="5px">
-              <Flex alignItems="center" justifyContent="center">
-                <Heading mt={10}>Choose a video to play!</Heading>
-              </Flex>
-            </Box>
+            <Box
+              width="100%"
+              height="750px"
+              borderWidth="2px"
+              rounded="lg"
+              bg="secondary"
+            ></Box>
           ) : (
             <ReactPlayer
               width="100%"
@@ -141,19 +150,23 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               onSeek={this.handleSeek}
               onEnd={this.handleEnd}
               onProgress={this.handleProgress}
+              onDuration={this.handleDuration}
             ></ReactPlayer>
           )}
-          <Slider onChange={this.handleSeekChange} value={played}>
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-          <HStack justify="center">
+          <HStack>
             <PlayPauseButton
               playing={playing}
               onClick={this.handlePlayPause}
             ></PlayPauseButton>
+            <Box />
+            <Slider onChange={this.handleSeekChange} value={played}>
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
+            <Box />
+            <Duration seconds={duration * (played / 100)} />
           </HStack>
           <VideoQueue videoQueue={videoUrlQueue}></VideoQueue>
         </Stack>
