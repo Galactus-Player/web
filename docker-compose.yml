@@ -1,19 +1,36 @@
 version: "3"
-services:
-  reverseproxy:
-    image: rjected/galactusnginx
-    ports:
-      - 80:80
-    restart: always
+networks:
+  galactusnet:
+    driver: bridge
 
+services:
   room:
     image: rjected/galactusroom
-    depends_on:
-      - reverseproxy
+    expose:
+        - "8080"
     restart: always
+    networks:
+        - galactusnet
 
   web:
     image: rjected/galactusweb
+    expose:
+        - "3000"
     depends_on:
-      - reverseproxy
+      - room
     restart: always
+    networks:
+        - galactusnet
+
+  reverseproxy:
+    image: nginx:latest
+    ports:
+        - 80:80
+    depends_on:
+        - web
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+        - galactusnet
+

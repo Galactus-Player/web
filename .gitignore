@@ -24,6 +24,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# ignore the yml files downloaded in deployment
+scripts/openapi.yml
+scripts/host_openapi.yml
+
 # local env files
 .env.local
 .env.development.local
