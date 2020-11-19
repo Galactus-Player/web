@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   HStack,
   IconButton,
   Slider,
@@ -12,11 +11,7 @@ import {
 import { Form, Formik } from "formik";
 import React from "react";
 import { findDOMNode } from "react-dom";
-import {
-  AiFillPayCircle,
-  AiFillPlayCircle,
-  AiOutlineFullscreen,
-} from "react-icons/ai";
+import { AiFillPlayCircle, AiOutlineFullscreen } from "react-icons/ai";
 import { BiAddToQueue } from "react-icons/bi";
 import ReactPlayer from "react-player";
 import screenfull from "screenfull";
@@ -63,13 +58,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   };
 
   handleEnd = () => {
-    console.log("hi");
-    // this.setState({
-    //   url: "https://www.youtube.com/watch?v=6vEwFbR86hY",
-    //   playing: true,
-    // });
     if (this.state.videoUrlQueue.length > 0) {
-      // Create temp to maintain immutability of state.
       let temp = this.state.videoUrlQueue;
       temp.shift();
       this.setState({
@@ -96,6 +85,9 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   handleFullScreen = () => {
     if (screenfull.isEnabled) {
       if (this.player !== null) {
+        // Getting annoying Typescript error: Argument of type
+        // 'Element | Text | null' is not assignable to parameter of type
+        // 'Element | undefined'. Don't think it matters and it still compiles.
         screenfull.request(findDOMNode(this.player));
       }
     }
@@ -184,7 +176,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               <Form>
                 <HStack>
                   <IconButton
-                    // variant="outline"
                     colorScheme="teal"
                     isRound={true}
                     aria-label="Call Sage"
@@ -193,7 +184,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                     icon={<AiFillPlayCircle />}
                   />
                   <IconButton
-                    // variant="outline"
                     id="queue"
                     colorScheme="teal"
                     isRound={true}

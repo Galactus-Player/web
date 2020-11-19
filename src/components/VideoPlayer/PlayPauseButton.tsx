@@ -16,7 +16,6 @@ export const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({
     <>
       {playing ? (
         <IconButton
-          // variant="outline"
           colorScheme="teal"
           isRound={true}
           aria-label="Call Sage"
@@ -27,7 +26,6 @@ export const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({
       ) : (
         <IconButton
           isRound={true}
-          // variant="outline"
           colorScheme="teal"
           aria-label="Call Sage"
           onClick={onClick}

@@ -11,14 +11,15 @@ export const Room: React.FC<roomProps> = ({}) => {
   const {
     query: { code },
   } = useRouter();
-  const codestr = code?.toString();
   return (
     <>
       <NavBar />
       <Flex direction="column" alignItems="center" mt={10}>
         <Box width="70%" height="100%">
           <Stack>
-            {/* <Heading textAlign="center">You are in room {codestr}!</Heading> */}
+            <Heading textAlign="center">
+              You are in room {code?.toString()}!
+            </Heading>
             <VideoPlayer />
           </Stack>
         </Box>
