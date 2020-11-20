@@ -1,0 +1,80 @@
+version: "2.1"
+networks:
+  galactusnet:
+    driver: bridge
+
+services:
+  postgres_host:
+    image: postgres
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - galactusnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  room:
+    image: rjected/galactusroom
+    expose:
+      - "8080"
+    restart: always
+    networks:
+      - galactusnet
+    depends_on:
+      postgres_host:
+        condition: service_healthy
+
+  mongo_host:
+    image: mongo
+    restart: always
+    expose:
+      - "27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    networks:
+      - galactusnet
+
+  queue:
+    image: queueservice:latest
+    expose:
+      - "9090"
+    restart: always
+    networks:
+      - galactusnet
+
+  sync:
+    image: rjected/galactussync
+    expose:
+      - "9595"
+    networks:
+      - galactusnet
+
+  web:
+    image: rjected/galactusweb
+    expose:
+      - "3000"
+    depends_on:
+      - room
+      - sync
+    restart: always
+    networks:
+      - galactusnet
+
+  reverseproxy:
+    image: nginx:latest
+    ports:
+      - 80:80
+    depends_on:
+      - web
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - galactusnet
+
