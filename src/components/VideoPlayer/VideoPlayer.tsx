@@ -14,15 +14,25 @@ import { findDOMNode } from "react-dom";
 import { AiFillPlayCircle, AiOutlineFullscreen } from "react-icons/ai";
 import { BiAddToQueue } from "react-icons/bi";
 import ReactPlayer from "react-player";
+import { SingletonRouter, withRouter } from "next/router";
 import screenfull from "screenfull";
 import { InputField } from "../general/InputField";
 import { Duration } from "./Duration";
 import { PlayPauseButton } from "./PlayPauseButton";
 import { VideoQueue } from "./VideoQueue";
+import {
+  subscribeToVideoState,
+  updateStatus,
+  resyncVideo,
+  VideoState
+} from '../../api/sync/sync-client';
 
-type VideoPlayerProps = {};
+type VideoPlayerProps = {
+  router: SingletonRouter;
+};
 
 type VideoPlayerState = {
+  ignoreUpdates: boolean;
   playing: boolean;
   seeking: boolean;
   played: number;
@@ -41,6 +51,7 @@ type progressState = {
 class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   player: ReactPlayer | null = null;
   state: VideoPlayerState = {
+    ignoreUpdates: true,
     playing: false,
     seeking: false,
     played: 0,
@@ -48,6 +59,17 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     url: "",
     videoUrlQueue: [],
   };
+
+  constructor(props: VideoPlayerProps) {
+    super(props);
+    subscribeToVideoState(this.handleSync);
+  }
+
+  handleSync = ({ playing, videoPosition }: VideoState) => {
+    this.setState({ ignoreUpdates: true });
+    this.player?.seekTo(videoPosition / 1000);
+    this.setState({ playing });
+  }
 
   handlePlayPause = () => {
     this.setState({ playing: !this.state.playing });
@@ -78,6 +100,15 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     this.setState({ played: state.played * 100 });
   };
 
+  handleUpdate = () => {
+    // TODO: switch to `const { playing, ignoreUpdates } = this.state;` after #3 is fixed
+    if (this.state.ignoreUpdates) return this.setState({ ignoreUpdates: false });
+    const playing = (this.player!.getInternalPlayer() as any).getPlayerState() === 1;
+    const videoPosition = this.player!.getCurrentTime() * 1000;
+    (window as any).player = this.player;
+    updateStatus(playing, videoPosition);
+  };
+
   handleDuration = (duration: number) => {
     this.setState({ duration });
   };
@@ -92,17 +123,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
       }
     }
   };
-
-  // TODO(issue) connect all callbacks to the sync service.
-  handlePlay = () => {
-    this.setState({ playing: true });
-  };
-
-  handlePause = () => {
-    this.setState({ playing: false });
-  };
-
-  handleSeek = () => {};
 
   refPlayer = (player: ReactPlayer | null) => {
     this.player = player;
@@ -128,9 +148,9 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               ref={this.refPlayer}
               url={url}
               playing={playing}
-              onPlay={this.handlePlay}
-              onPause={this.handlePause}
-              onSeek={this.handleSeek}
+              onPlay={this.handleUpdate}
+              onPause={this.handleUpdate}
+              onSeek={this.handleUpdate}
               onEnded={this.handleEnd}
               onProgress={this.handleProgress}
               onDuration={this.handleDuration}
@@ -170,6 +190,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               } else {
                 this.setState({ url: values.url, playing: true });
               }
+              resyncVideo();
             }}
           >
             {({ isSubmitting, submitForm, setFieldValue }) => (
@@ -211,4 +232,4 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   }
 }
 
-export default VideoPlayer;
+export default withRouter(VideoPlayer);
