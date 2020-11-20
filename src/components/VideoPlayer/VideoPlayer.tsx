@@ -1,36 +1,51 @@
 import {
   Box,
-  Button,
-  Flex,
-  Heading,
   HStack,
-  VStack,
+  IconButton,
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
   Stack,
+  VStack
 } from "@chakra-ui/core";
-import React from "react";
 import { Form, Formik } from "formik";
+import React from "react";
+import { findDOMNode } from "react-dom";
+import { AiFillPlayCircle, AiOutlineFullscreen } from "react-icons/ai";
+import { BiAddToQueue } from "react-icons/bi";
 import ReactPlayer from "react-player";
+import { SingletonRouter, withRouter } from "next/router";
+import screenfull from "screenfull";
 import { InputField } from "../general/InputField";
+import { Duration } from "./Duration";
 import { PlayPauseButton } from "./PlayPauseButton";
 import { VideoQueue } from "./VideoQueue";
+import {
+  subscribeToVideoState,
+  updateStatus,
+  resyncVideo,
+  VideoState
+} from '../../api/sync/sync-client';
 
 import { QueueApi, AddVideoRequest, DefaultApi, Video } from '../../api/queue';
 
 type VideoPlayerProps = {
   room: string;
+  router: SingletonRouter;
 };
 
 type VideoPlayerState = {
+  ignoreUpdates: boolean;
   playing: boolean;
   seeking: boolean;
   played: number;
   videoUrlQueue: Video[];
   queueUpdateCounter: number;
   qUpdateInterval?: NodeJS.Timeout | null;
+  duration: number;
+  // url: string;
+  // videoUrlQueue: string[];
 };
 
 type progressState = {
@@ -43,9 +58,12 @@ type progressState = {
 class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   player: ReactPlayer | null = null;
   state: VideoPlayerState = {
+    ignoreUpdates: true,
     playing: false,
     seeking: false,
     played: 0,
+    duration: 0,
+    // url: "",
     videoUrlQueue: [],
     queueUpdateCounter: 0,
     qUpdateInterval: null
@@ -60,6 +78,17 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     if (this.state.qUpdateInterval) {
       clearInterval(this.state.qUpdateInterval);
     }
+  }
+
+  constructor(props: VideoPlayerProps) {
+    super(props);
+    subscribeToVideoState(this.handleSync);
+  }
+
+  handleSync = ({ playing, videoPosition }: VideoState) => {
+    this.setState({ ignoreUpdates: true });
+    this.player?.seekTo(videoPosition / 1000);
+    this.setState({ playing });
   }
 
   handlePlayPause = () => {
@@ -120,7 +149,18 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     }
   };
 
-  handleEnd = () => {};
+  handleEnd = () => {
+    if (this.state.videoUrlQueue.length > 0) {
+      let temp = this.state.videoUrlQueue;
+      temp.shift();
+      // TODO: Play 2nd video.
+      this.setState({
+        // url: this.state.videoUrlQueue[0],
+        videoUrlQueue: temp,
+        playing: true,
+      });
+    }
+  };
 
   handleSeekChange = (played: number) => {
     this.setState({ played });
@@ -131,19 +171,37 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     this.setState({ played: state.played * 100 });
   };
 
-  // TODO(issue) connect all callbacks to the sync service.
-  handlePlay = () => {};
+  handleUpdate = () => {
+    // TODO: switch to `const { playing, ignoreUpdates } = this.state;` after #3 is fixed
+    if (this.state.ignoreUpdates) return this.setState({ ignoreUpdates: false });
+    const playing = (this.player!.getInternalPlayer() as any).getPlayerState() === 1;
+    const videoPosition = this.player!.getCurrentTime() * 1000;
+    (window as any).player = this.player;
+    updateStatus(playing, videoPosition);
+  };
 
-  handlePause = () => {};
+  handleDuration = (duration: number) => {
+    this.setState({ duration });
+  };
 
-  handleSeek = () => {};
+  handleFullScreen = () => {
+    if (screenfull.isEnabled) {
+      if (this.player !== null) {
+        // Getting annoying Typescript error: Argument of type
+        // 'Element | Text | null' is not assignable to parameter of type
+        // 'Element | undefined'. Don't think it matters and it still compiles.
+        /* @ts-ignore */
+        screenfull.request(findDOMNode(this.player));
+      }
+    }
+  };
 
   refPlayer = (player: ReactPlayer | null) => {
     this.player = player;
   };
 
   render() {
-    const { playing, played, videoUrlQueue } = this.state;
+    const { playing, played, videoUrlQueue, duration } = this.state;
     const currentVideo = this.getCurVid();
     console.log(`Video Player: ${JSON.stringify(currentVideo)}`);
     return (
@@ -154,35 +212,44 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               initialValues={{ url: "", isQueue: false }}
               onSubmit={async (values, { setErrors }) => {
                 // TODO: Error handling
-                await this.handleAddToQueue(this.props.room, values.url, true);
-                this.setState({ playing: true });
+                if (values.isQueue) {
+                  await this.handleAddToQueue(this.props.room, values.url);
+                } else {
+                  await this.handleAddToQueue(this.props.room, values.url, true);
+                  this.setState({ playing: true });
+                }
+                resyncVideo();
               }}
             >
               {({ isSubmitting, submitForm, setFieldValue }) => (
                 <Form>
                   <HStack>
-                    <InputField
-                      name="url"
-                      placeholder="url"
-                      label=""
-                    ></InputField>
-                    <Button
+                    <IconButton
+                      colorScheme="teal"
+                      isRound={true}
+                      aria-label="Call Sage"
+                      fontSize="20px"
                       onClick={submitForm}
-                      id="play"
-                      isLoading={isSubmitting}
-                    >
-                      Play
-                    </Button>
-                    <Button
+                      icon={<AiFillPlayCircle />}
+                    />
+                    <IconButton
                       id="queue"
+                      colorScheme="teal"
+                      isRound={true}
+                      aria-label="Call Sage"
+                      fontSize="20px"
+                      icon={<BiAddToQueue />}
                       isLoading={isSubmitting}
                       onClick={() => {
                         setFieldValue("isQueue", true);
                         submitForm();
                       }}
-                    >
-                      Queue
-                    </Button>
+                    />
+                    <InputField
+                      name="url"
+                      placeholder="Video URL"
+                      label=""
+                    ></InputField>
                   </HStack>
                 </Form>
               )}
@@ -191,36 +258,51 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
           <HStack w="100%" alignItems="start" justifyContent="space-evenly" bg="green.100">
             <VStack w="70%" bg="pink.100">
               {currentVideo === null ? (
-                <Box width="100%" height="750px" borderWidth="5px">
-                  <Flex alignItems="center" justifyContent="center">
-                    <Heading mt={10}>Choose a video to play!</Heading>
-                  </Flex>
-                </Box>
+                <Box
+                  width="100%"
+                  height="750px"
+                  borderWidth="2px"
+                  rounded="lg"
+                  bg="secondary"
+                ></Box>
               ) : (
                 <ReactPlayer
                   width="100%"
                   height="750px"
                   ref={this.refPlayer}
-                  url={currentVideo.url!}
+                  url={currentVideo.url}
                   playing={playing}
-                  onPlay={this.handlePlay}
-                  onPause={this.handlePause}
-                  onSeek={this.handleSeek}
-                  onEnd={this.handleEnd}
+                  onPlay={this.handleUpdate}
+                  onPause={this.handleUpdate}
+                  onSeek={this.handleUpdate}
+                  onEnded={this.handleEnd}
                   onProgress={this.handleProgress}
+                  onDuration={this.handleDuration}
                 ></ReactPlayer>
               )}
-              <Slider onChange={this.handleSeekChange} value={played}>
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack justify="center">
+              <HStack>
                 <PlayPauseButton
                   playing={playing}
                   onClick={this.handlePlayPause}
                 ></PlayPauseButton>
+                <IconButton
+                  // variant="outline"
+                  colorScheme="teal"
+                  isRound={true}
+                  aria-label="Call Sage"
+                  fontSize="20px"
+                  onClick={this.handleFullScreen}
+                  icon={<AiOutlineFullscreen />}
+                />
+                <Box />
+                <Slider onChange={this.handleSeekChange} value={played}>
+                  <SliderTrack>
+                    <SliderFilledTrack />
+                  </SliderTrack>
+                  <SliderThumb />
+                </Slider>
+                <Box />
+                <Duration seconds={duration * (played / 100)} />
               </HStack>
             </VStack>
             <VideoQueue
@@ -235,4 +317,4 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   }
 }
 
-export default VideoPlayer;
+export default withRouter(VideoPlayer);
