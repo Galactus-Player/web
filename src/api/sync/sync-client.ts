@@ -1,5 +1,5 @@
 import SocketIO from "socket.io-client";
-const socket = SocketIO("http://localhost");
+const socket = SocketIO("http://localhost", { transports: ['websocket'] });
 
 export interface VideoState {
   playing: boolean
@@ -24,6 +24,10 @@ let currentStatus = { playing: false, timestamp: 0, videoPosition: 0 };
 
 export function joinRoom(code: number) {
   socket.emit("join", { room: code });
+}
+
+export function resyncVideo() {
+  socket.emit("status");
 }
 
 export function getCurrentVideoState(): VideoState {

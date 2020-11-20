@@ -22,8 +22,8 @@ import { PlayPauseButton } from "./PlayPauseButton";
 import { VideoQueue } from "./VideoQueue";
 import {
   subscribeToVideoState,
-  joinRoom,
   updateStatus,
+  resyncVideo,
   VideoState
 } from '../../api/sync/sync-client';
 
@@ -62,14 +62,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
 
   constructor(props: VideoPlayerProps) {
     super(props);
-    const queryString = '?' + props.router.asPath.split('?')[1];
-    const code = new URLSearchParams(queryString).get('code');
-    if (code) {
-      joinRoom(parseInt(code, 10));
-      subscribeToVideoState(this.handleSync);
-    } else {
-      // TODO: Error handling (no room code)
-    }
+    subscribeToVideoState(this.handleSync);
   }
 
   handleSync = ({ playing, videoPosition }: VideoState) => {
@@ -197,6 +190,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               } else {
                 this.setState({ url: values.url, playing: true });
               }
+              resyncVideo();
             }}
           >
             {({ isSubmitting, submitForm, setFieldValue }) => (
