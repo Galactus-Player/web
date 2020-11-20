@@ -4,6 +4,15 @@ networks:
     driver: bridge
 
 services:
+  postgres_host:
+    image: postgres
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+        - galactusnet
+
   room:
     image: rjected/galactusroom
     expose:
@@ -11,6 +20,8 @@ services:
     restart: always
     networks:
         - galactusnet
+    depends_on:
+      - postgres_host
 
   web:
     image: rjected/galactusweb
