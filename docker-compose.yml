@@ -29,12 +29,20 @@ services:
       postgres_host:
         condition: service_healthy
 
+  sync:
+    image: rjected/galactussync
+    expose:
+      - "9595"
+    networks:
+      - galactusnet
+
   web:
     image: rjected/galactusweb
     expose:
       - "3000"
     depends_on:
       - room
+      - sync
     restart: always
     networks:
       - galactusnet
