@@ -21,12 +21,12 @@ export const Room: React.FC<roomProps> = ({}) => {
         // justifyContent="flex-start"
         mt={10}
       >
-        <Box width="70%" height="100%">
+        <Box width="100%" height="100%">
           <Stack>
             <Text textAlign="center">
               You are in room {codestr}!
             </Text>
-            <VideoPlayer />
+            <VideoPlayer room={codestr!}/>
           </Stack>
         </Box>
       </Flex>
