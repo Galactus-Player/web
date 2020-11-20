@@ -1,5 +1,5 @@
 import SocketIO from "socket.io-client";
-const socket = SocketIO(window.location.origin, { transports: ['websocket'] });
+const socket = SocketIO();
 
 export interface VideoState {
   playing: boolean
