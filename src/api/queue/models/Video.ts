@@ -45,6 +45,12 @@ export interface Video {
     thumbnailUrl?: string;
     /**
      * 
+     * @type {string}
+     * @memberof Video
+     */
+    title?: string;
+    /**
+     * 
      * @type {Date}
      * @memberof Video
      */
@@ -65,6 +71,7 @@ export function VideoFromJSONTyped(json: any, ignoreDiscriminator: boolean): Vid
         'index': !exists(json, 'index') ? undefined : json['index'],
         'url': !exists(json, 'url') ? undefined : json['url'],
         'thumbnailUrl': !exists(json, 'thumbnailUrl') ? undefined : json['thumbnailUrl'],
+        'title': !exists(json, 'title') ? undefined : json['title'],
         'addedAt': !exists(json, 'addedAt') ? undefined : (new Date(json['addedAt'])),
     };
 }
@@ -82,6 +89,7 @@ export function VideoToJSON(value?: Video | null): any {
         'index': value.index,
         'url': value.url,
         'thumbnailUrl': value.thumbnailUrl,
+        'title': value.title,
         'addedAt': value.addedAt === undefined ? undefined : (value.addedAt.toISOString()),
     };
 }

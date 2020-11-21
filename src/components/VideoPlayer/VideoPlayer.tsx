@@ -28,7 +28,7 @@ import {
   VideoState
 } from '../../api/sync/sync-client';
 
-import { QueueApi, AddVideoRequest, DefaultApi, Video } from '../../api/queue';
+import { QueueApi, DefaultApi, Video } from '../../api/queue';
 
 type VideoPlayerProps = {
   room: string;
@@ -241,14 +241,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               {({ isSubmitting, submitForm, setFieldValue }) => (
                 <Form>
                   <HStack>
-                    <IconButton
-                      colorScheme="teal"
-                      isRound={true}
-                      aria-label="Call Sage"
-                      fontSize="20px"
-                      onClick={submitForm}
-                      icon={<AiFillPlayCircle />}
-                    />
                     <IconButton
                       id="queue"
                       colorScheme="teal"
