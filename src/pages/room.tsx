@@ -22,12 +22,12 @@ export const Room: React.FC<roomProps> = ({}) => {
     <>
       <NavBar />
       <Flex direction="column" alignItems="center" mt={10}>
-        <Box width="70%" height="100%">
+        <Box width="100%" height="100%">
           <Stack>
-            <Heading textAlign="center">
-              You are in room {code?.toString()}!
-            </Heading>
-            <VideoPlayer />
+            <Text textAlign="center">
+              You are in room {code}!
+            </Text>
+            <VideoPlayer room={code as string}/>
           </Stack>
         </Box>
       </Flex>
