@@ -1,19 +1,27 @@
-import { useColorMode, Switch, Text } from "@chakra-ui/core";
+import { useColorMode, Switch, Text, Flex } from "@chakra-ui/core";
+import React from "react";
 
 export const DarkModeSwitch = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isDark = colorMode === "dark";
   return (
     <>
-      <Text>Dark Mode</Text>
-      <Switch
-        position="fixed"
-        top="2rem"
-        right="1rem"
-        color="green"
-        isChecked={isDark}
-        onChange={toggleColorMode}
-      />
+      <Flex
+        // position="absolute"
+        // top="10px"
+        // right="20px"
+        alignItems="center"
+        padding="10px"
+        rounded="md"
+      >
+        <Switch
+          defaultIsChecked={true}
+          color="green"
+          isChecked={isDark}
+          onChange={toggleColorMode}
+          mr={2}
+        />
+      </Flex>
     </>
   );
 };

@@ -20,17 +20,9 @@ export const Room: React.FC<roomProps> = ({}) => {
 
   return (
     <>
-      <NavBar />
-      <Flex direction="column" alignItems="center" mt={10}>
-        <Box width="100%" height="100%">
-          <Stack>
-            <Text textAlign="center">
-              You are in room {code}!
-            </Text>
-            <VideoPlayer room={code as string}/>
-          </Stack>
-        </Box>
-      </Flex>
+      <Box h="100vh" w="100vw">
+        <VideoPlayer room={code as string} />
+      </Box>
     </>
   );
 };
