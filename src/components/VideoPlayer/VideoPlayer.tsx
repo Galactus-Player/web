@@ -206,7 +206,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     console.log(`Video Player: ${JSON.stringify(currentVideo)}`);
     return (
       <>
-        <VStack justify="space-between" align="stretch" bg="yellow.100" alignItems="center">
+        <VStack justify="space-between" align="stretch" alignItems="center">
           <Box w="50%">
             <Formik
               initialValues={{ url: "", isQueue: false }}
@@ -255,8 +255,8 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
               )}
             </Formik>
           </Box>
-          <HStack w="100%" alignItems="start" justifyContent="space-evenly" bg="green.100">
-            <VStack w="70%" bg="pink.100">
+          <HStack w="100%" alignItems="start" justifyContent="space-evenly">
+            <VStack w="70%">
               {currentVideo === null ? (
                 <Box
                   width="100%"
@@ -280,7 +280,7 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                   onDuration={this.handleDuration}
                 ></ReactPlayer>
               )}
-              <HStack>
+              <HStack w="100%" justifyContent="center">
                 <PlayPauseButton
                   playing={playing}
                   onClick={this.handlePlayPause}
@@ -295,12 +295,14 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                   icon={<AiOutlineFullscreen />}
                 />
                 <Box />
-                <Slider onChange={this.handleSeekChange} value={played}>
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb />
-                </Slider>
+                <Stack w="80%">
+                  <Slider onChange={this.handleSeekChange} value={played}>
+                    <SliderTrack>
+                      <SliderFilledTrack />
+                    </SliderTrack>
+                    <SliderThumb />
+                  </Slider>
+                </Stack>
                 <Box />
                 <Duration seconds={duration * (played / 100)} />
               </HStack>

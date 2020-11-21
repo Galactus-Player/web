@@ -11,10 +11,10 @@ interface VideoQueueProps {
 // TODO: call Youtube API/Vimeo API/etc... to get video metadata (Title,.. etc)
 export const VideoQueue: React.FC<VideoQueueProps> = ({ videoQueue, removeVideo, playVideo }) => {
   return (
-    <Box bg="blue.100" w="20em" mb="2em">
+    <Box w="20em" mb="2em">
       <Stack>
         {videoQueue.map((video, key) => (
-          <Box className="videoInQ" key={key} bg="orange.100">
+          <Box className="videoInQ" key={key}>
             <Image
               src={video.thumbnailUrl}
               alt={"/videoIcon.png"}
@@ -22,7 +22,7 @@ export const VideoQueue: React.FC<VideoQueueProps> = ({ videoQueue, removeVideo,
             />
             <HStack justifyContent="space-evenly" mt="10px">
               <Button onClick={async () => await playVideo(video.id!)} id="playFromQ">
-                Play
+                Play Now
               </Button>
               <Button onClick={async () => await removeVideo(video.id!)} id="playFromQ">
                 Remove
