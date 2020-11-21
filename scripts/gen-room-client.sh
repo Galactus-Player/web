@@ -6,6 +6,7 @@ if [ $# -eq 0 ]
     exit
 fi
 
+export OPENAPI_YML=https://raw.githubusercontent.com/Galactus-Player/roomservice/main/api/openapi.yaml
 export HOST_OPENAPI_YML=scripts/host_openapi_room.yml
 curl $OPENAPI_YML > openapi_room.yml
 yq write openapi_room.yml "servers[*].url" "http://$1/api" > ./host_openapi_room.yml
