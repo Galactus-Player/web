@@ -105,8 +105,12 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
 
     console.log(`updateQueue: ${JSON.stringify(videoQueueObj)}`);
 
-    if (videoQueueObj.counter !== this.state.queueUpdateCounter && videoQueueObj.queue) {
-      this.setState({ videoUrlQueue: videoQueueObj.queue! })
+    if (videoQueueObj.counter !== this.state.queueUpdateCounter) {
+      if (videoQueueObj.queue) {
+        this.setState({ videoUrlQueue: videoQueueObj.queue })
+      } else {
+        this.setState({ videoUrlQueue: [] })
+      }
     }
   }
 
