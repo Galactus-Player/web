@@ -85,14 +85,37 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     subscribeToVideoState(this.handleSync);
   }
 
+  debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout | null = null;
+    return () => {
+      clearTimeout(timeout!);
+      timeout = setTimeout(() => {
+        timeout = null;
+        func();
+      }, wait);
+    };
+  };
+
+  allowUpdatesAfterOneSecond = this.debounce(() => {
+    this.setState({ ignoreUpdates: false });
+  }, 2000);
+
   handleSync = ({ playing, videoPosition }: VideoState) => {
+    console.log(">> RECV SYNC", { playing, videoPosition });
     this.setState({ ignoreUpdates: true });
-    this.player?.seekTo(videoPosition / 1000);
-    this.setState({ playing });
+    this.allowUpdatesAfterOneSecond();
+    const internalPlayer: any = this.player?.getInternalPlayer();
+    if (typeof internalPlayer?.playVideo === "function") {
+      this.player!.seekTo(videoPosition / 1000);
+      if (playing) internalPlayer?.playVideo(); else internalPlayer?.pauseVideo();
+    } else {
+      setTimeout(resyncVideo, 2000);
+    }
   }
 
   handlePlayPause = () => {
     this.setState({ playing: !this.state.playing });
+    this.handleUpdate();
   };
 
   getCurVid = (): Video | null => {
@@ -102,8 +125,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   updateQueue = async () => {
     const queueApi = new DefaultApi();
     const videoQueueObj = await queueApi.getQueue({ code: this.props.room });
-
-    console.log(`updateQueue: ${JSON.stringify(videoQueueObj)}`);
 
     if (videoQueueObj.counter !== this.state.queueUpdateCounter) {
       if (videoQueueObj.queue) {
@@ -117,7 +138,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   handleAddToQueue = async (roomCode: string, url: string, startPlayin: boolean = false) => {
     const queueApi = new QueueApi();
     const video = await queueApi.addVideo({ code: roomCode, addVideoRequest: { url } })
-    console.log(JSON.stringify(video));
     if (!video.url || !video.id) {
       // TODO: Handle Error
       return;
@@ -133,10 +153,8 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     const queueApi = new QueueApi();
     try {
       const resp = await queueApi.removeVideo({ code: roomCode, removeVideo: { id: videoId } })
-      console.log(JSON.stringify(resp));
       this.setState({ videoUrlQueue: this.state.videoUrlQueue.filter(v => v.id !== videoId) });
     } catch (e) {
-      console.log(`Error removing video ${e}`)
     }
   };
 
@@ -144,12 +162,10 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     const queueApi = new QueueApi();
     try {
       const resp = await queueApi.playVideo({ code: roomCode, playVideo: { id: videoId } })
-      console.log(`handlePlayFromQueue: ${JSON.stringify(resp)}`);
       if (resp.queue && resp.queue.length > 0) {
         this.setState({ videoUrlQueue: resp.queue });
       }
     } catch (e) {
-      console.log(`Error removing video ${e}`)
     }
   };
 
@@ -169,34 +185,32 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   handleSeekChange = (played: number) => {
     this.setState({ played });
     this.player?.seekTo(played / 100, "fraction");
+    this.handleUpdate();
   };
 
   handleProgress = (state: progressState) => {
     this.setState({ played: state.played * 100 });
   };
 
-  handleUpdate = () => {
-    // TODO: switch to `const { playing, ignoreUpdates } = this.state;` after #3 is fixed
-    if (this.state.ignoreUpdates) return this.setState({ ignoreUpdates: false });
-    const playing = (this.player!.getInternalPlayer() as any).getPlayerState() === 1;
-    const videoPosition = this.player!.getCurrentTime() * 1000;
-    (window as any).player = this.player;
+  handleUpdate = this.debounce(() => {
+    const { ignoreUpdates, played } = this.state;
+    if (ignoreUpdates || !this.player) return;
+    const internalPlayer: any = this.player!.getInternalPlayer();
+    const playerState = internalPlayer.getPlayerState();
+    const playing = playerState === 1 || playerState === 3;
+    const videoPosition = played * internalPlayer.getDuration() * 10;
+    this.setState({ playing });
     updateStatus(playing, videoPosition);
-  };
+    console.log(">> SEND", { playing, videoPosition });
+  }, 500);
 
   handleDuration = (duration: number) => {
     this.setState({ duration });
   };
 
   handleFullScreen = () => {
-    if (screenfull.isEnabled) {
-      if (this.player !== null) {
-        // Getting annoying Typescript error: Argument of type
-        // 'Element | Text | null' is not assignable to parameter of type
-        // 'Element | undefined'. Don't think it matters and it still compiles.
-        /* @ts-ignore */
-        screenfull.request(findDOMNode(this.player));
-      }
+    if (screenfull.isEnabled && this.player !== null) {
+      screenfull.request(findDOMNode(this.player) as Element);
     }
   };
 
@@ -207,7 +221,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
   render() {
     const { playing, played, videoUrlQueue, duration } = this.state;
     const currentVideo = this.getCurVid();
-    console.log(`Video Player: ${JSON.stringify(currentVideo)}`);
     return (
       <>
         <VStack justify="space-between" align="stretch" alignItems="center">
