@@ -1,14 +1,16 @@
-import { Button, Flex, Heading, HStack, Input } from "@chakra-ui/core";
+import { Button, Flex, Heading, HStack, Text } from "@chakra-ui/core";
 import { useRouter } from "next/router";
-import { RoomApi } from "../api/room/index";
+import { DefaultApi, RoomApi } from "../api/room/index";
 import React from "react";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { Form, Formik } from "formik";
+import { InputField } from "../components/general/InputField";
 
 interface indexProps {}
 
 export const Index: React.FC<indexProps> = ({}) => {
   const router = useRouter();
   const roomApi = new RoomApi();
+  const defaultRoomApi = new DefaultApi();
   return (
     <>
       <Flex
@@ -23,28 +25,62 @@ export const Index: React.FC<indexProps> = ({}) => {
         <Heading fontSize="2vh" mt={5}>
           A synchronized video experience.
         </Heading>
-        <HStack mt={10}>
-          <Button
-            colorScheme="teal"
-            w="150px"
-            onClick={() => {
-              const newRoomPromise = roomApi.addRoom();
-              newRoomPromise
-                .then((room) => {
-                  router.push("/room?code=" + room.code);
-                })
-                .catch((error) => {
-                  alert(error.message);
+        <Text mt={2}>
+          Watch videos from Youtube, Vimeo, Facebook (and many more) with
+          friends anywhere
+        </Text>
+        <Formik
+          initialValues={{ code: "", field: "" }}
+          onSubmit={async (values, { setErrors }) => {
+            if (values.field === "new") {
+              const newRoom = await roomApi.addRoom();
+              router.push("/room?code=" + newRoom.code);
+            } else if (values.field === "join") {
+              try {
+                const room = await defaultRoomApi.getRoomByCode({
+                  code: values.code,
                 });
-            }}
-          >
-            New Room
-          </Button>
-          <Input placeholder="Enter a code or link" variant="filled" />
-          <Button colorScheme="teal" variant="ghost" disabled={true}>
-            Join
-          </Button>
-        </HStack>
+                router.push("/room?code=" + room.code);
+              } catch {
+                setErrors({ code: "Invalid Code" });
+              }
+            }
+          }}
+        >
+          {({ isSubmitting, submitForm, setFieldValue }) => (
+            <Form>
+              <HStack mt={10} alignItems="top">
+                <Button
+                  colorScheme="teal"
+                  w="150px"
+                  isLoading={isSubmitting}
+                  onClick={() => {
+                    setFieldValue("field", "new");
+                    submitForm();
+                  }}
+                >
+                  New Room
+                </Button>
+                <InputField
+                  name="code"
+                  placeholder="Enter a code or link"
+                  label="code"
+                ></InputField>
+                <Button
+                  colorScheme="teal"
+                  variant="ghost"
+                  isLoading={isSubmitting}
+                  onClick={() => {
+                    setFieldValue("field", "join");
+                    submitForm();
+                  }}
+                >
+                  Join
+                </Button>
+              </HStack>
+            </Form>
+          )}
+        </Formik>
       </Flex>
     </>
   );
