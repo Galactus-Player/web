@@ -19,7 +19,7 @@ services:
       retries: 5
 
   room:
-    image: rjected/galactusroom:latest
+    image: docker.pkg.github.com/galactus-player/roomservice/galactusroom
     expose:
       - "8080"
     restart: always
@@ -41,7 +41,7 @@ services:
       - galactusnet
 
   queue:
-    image: rjected/queueservice
+    image: docker.pkg.github.com/galactus-player/queueservice/galactusqueue
     expose:
       - "9090"
     restart: always
@@ -49,14 +49,14 @@ services:
       - galactusnet
 
   sync:
-    image: rjected/galactussync
+    image: docker.pkg.github.com/galactus-player/sync-service/galactussync
     expose:
       - "9595"
     networks:
       - galactusnet
 
   web:
-    image: rjected/galactusweb:staging
+    image: docker.pkg.github.com/galactus-player/web/galactusweb:staging
     expose:
       - "3000"
     depends_on:
