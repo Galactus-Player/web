@@ -5,5 +5,7 @@ stdenv.mkDerivation {
 
   buildInputs = [
     pkgs.yarn
+    pkgs.yq
+    pkgs.openapi-generator-cli
   ];
 }

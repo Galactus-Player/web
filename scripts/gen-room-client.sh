@@ -6,6 +6,11 @@ if [ $# -eq 0 ]
     exit
 fi
 
+# yq method
+yq() {
+  docker run --rm -i -v "${PWD}":/workdir mikefarah/yq yq "$@"
+}
+
 export OPENAPI_YML=https://raw.githubusercontent.com/Galactus-Player/roomservice/main/api/openapi.yaml
 export HOST_OPENAPI_YML=scripts/host_openapi_room.yml
 curl $OPENAPI_YML > openapi_room.yml

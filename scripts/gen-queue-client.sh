@@ -5,6 +5,10 @@ if [ $# -eq 0 ]
     echo "No arguments supplied, please supply either localhost or a valid service hostname"
     exit
 fi
+# yq method
+yq() {
+  docker run --rm -i -v "${PWD}":/workdir mikefarah/yq yq "$@"
+}
 
 export OPENAPI_YML=https://raw.githubusercontent.com/Galactus-Player/queueservice/main/api/openapi.yaml
 export HOST_OPENAPI_YML=scripts/host_openapi_queue.yml
