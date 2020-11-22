@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -10,20 +9,15 @@ import {
   Flex,
   Heading,
   HStack,
-  Input,
   Stack,
-  ThemeProvider,
   useDisclosure,
 } from "@chakra-ui/core";
-import { BsPlusCircle } from "react-icons/bs";
-import { BiPlayCircle } from "react-icons/bi";
+import { Form, Formik } from "formik";
+import React from "react";
 import { Video } from "../../api/queue";
 import { DarkModeSwitch } from "../DarkModeSwitch";
-import React from "react";
-import { Thumbnail } from "./Thumbnail";
-import { Form, Formik } from "formik";
 import { InputField } from "../general/InputField";
-import { Button as CustomButton } from "./buttons/Button";
+import { Thumbnail } from "./Thumbnail";
 
 interface VideoQueueProps {
   videoQueue: Video[];
@@ -39,18 +33,18 @@ export const VideoQueue: React.FC<VideoQueueProps> = ({
   playVideo,
   formOnSubmit,
 }) => {
-  const [gray, setGray] = React.useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <BsPlusCircle
-        size="60px"
-        cursor={gray ? "pointer" : undefined}
-        color={gray ? "gray" : "white"}
-        onMouseEnter={() => setGray(true)}
-        onMouseLeave={() => setGray(false)}
+      <Button
+        size="lg"
+        rounded="full"
+        variant="outline"
         onClick={onOpen}
-      />
+        colorMode="dark"
+      >
+        <Heading>Play or Queue</Heading>
+      </Button>
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="md">
         <DrawerOverlay>
           <DrawerContent>
@@ -101,6 +95,8 @@ export const VideoQueue: React.FC<VideoQueueProps> = ({
                 {videoQueue.map((video, key) => (
                   <Thumbnail
                     key={key}
+                    title={"dog"}
+                    url={video.url}
                     thumbnailUrl={video.thumbnailUrl}
                     playNowOnClick={async () => await playVideo(video.id!)}
                     removeVideoOnClick={async () =>

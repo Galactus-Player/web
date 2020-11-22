@@ -24,6 +24,7 @@ import {
   VideoState,
 } from "../../api/sync/sync-client";
 import { Button as CustomButton } from "./buttons/Button";
+import { Copy } from "./buttons/Copy";
 import { Play } from "./buttons/Play";
 import { Duration } from "./Duration";
 import { VideoQueue } from "./VideoQueue";
@@ -241,11 +242,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     this.player = player;
   };
 
-  onClickRoomCopy = async () => {
-    const link = `https://galactus.live/room?code=${this.props.room}`
-    await navigator.clipboard.writeText(link);
-  }
-
   render() {
     const { playing, played, videoUrlQueue, duration } = this.state;
     const currentVideo = this.getCurVid();
@@ -285,13 +281,15 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                 <Box mr={2} />
                 <Heading>{room}</Heading>
                 <Box mr={2} />
-                <IconButton
+                <Copy room={room} />
+                {/* <IconButton
                   size="md"
                   icon={<FiCopy />}
                   variant="outline"
                   rounded="full"
+                  colorMode="dark"
                   onClick={this.onClickRoomCopy}
-                />
+                /> */}
               </Flex>
             </Flex>
             <Flex mb="10px">
@@ -322,10 +320,6 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                 <Box ml="35px" />
               </Flex>
               <Flex alignItems="center" color="white">
-                <Heading>
-                  <Duration seconds={duration - duration * (played / 100)} />
-                  {" Left"}
-                </Heading>
                 <Box ml="35px" />
                 <VideoQueue
                   videoQueue={videoUrlQueue}

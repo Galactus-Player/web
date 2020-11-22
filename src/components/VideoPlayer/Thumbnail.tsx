@@ -1,9 +1,11 @@
-import { Box, Button, Flex, Stack } from "@chakra-ui/core";
+import { Box, Button, Flex, Heading, Link, Stack, Text } from "@chakra-ui/core";
 import React from "react";
 import { Button as CustomButton } from "./buttons/Button";
 import { BiAddToQueue, BiPlayCircle, BiTrash } from "react-icons/bi";
 
 interface ThumbnailProps {
+  title: string | undefined;
+  url: string | undefined;
   thumbnailUrl: string | undefined;
   playNowOnClick: () => Promise<void>;
   removeVideoOnClick: () => Promise<void>;
@@ -13,6 +15,8 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
   thumbnailUrl,
   playNowOnClick,
   removeVideoOnClick,
+  title,
+  url,
 }) => {
   const [showButtons, setShowButtons] = React.useState(false);
   return (
@@ -50,6 +54,11 @@ export const Thumbnail: React.FC<ThumbnailProps> = ({
               </Flex>
             </>
           ) : null}
+        </Flex>
+        <Flex>
+          <Link href={url}>
+            <Heading size="md">{title}</Heading>
+          </Link>
         </Flex>
       </Stack>
     </Stack>

@@ -6,14 +6,7 @@ export const DarkModeSwitch = () => {
   const isDark = colorMode === "dark";
   return (
     <>
-      <Flex
-        // position="absolute"
-        // top="10px"
-        // right="20px"
-        alignItems="center"
-        padding="10px"
-        rounded="md"
-      >
+      <Flex alignItems="center" padding="10px" rounded="md">
         <Switch
           defaultIsChecked={true}
           color="green"
