@@ -19,7 +19,7 @@ services:
       retries: 5
 
   room:
-    image: rjected/galactusroom
+    image: rjected/galactusroom:latest
     expose:
       - "8080"
     restart: always
@@ -41,7 +41,7 @@ services:
       - galactusnet
 
   queue:
-    image: rjected/queueservice:latest
+    image: rjected/queueservice
     expose:
       - "9090"
     restart: always
@@ -56,7 +56,7 @@ services:
       - galactusnet
 
   web:
-    image: rjected/galactusweb
+    image: rjected/galactusweb:staging
     expose:
       - "3000"
     depends_on:
