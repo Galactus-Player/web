@@ -95,7 +95,7 @@ export const VideoQueue: React.FC<VideoQueueProps> = ({
                 {videoQueue.map((video, key) => (
                   <Thumbnail
                     key={key}
-                    title={"dog"}
+                    title={video.title}
                     url={video.url}
                     thumbnailUrl={video.thumbnailUrl}
                     playNowOnClick={async () => await playVideo(video.id!)}
