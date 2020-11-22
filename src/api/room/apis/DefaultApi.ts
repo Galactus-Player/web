@@ -17,7 +17,7 @@ import * as runtime from '../runtime';
 import {
     Room,
     RoomFromJSON,
-    // RoomToJSON,
+    RoomToJSON,
 } from '../models';
 
 export interface GetRoomByCodeRequest {
@@ -25,7 +25,7 @@ export interface GetRoomByCodeRequest {
 }
 
 /**
- * no description
+ * 
  */
 export class DefaultApi extends runtime.BaseAPI {
 
@@ -37,7 +37,7 @@ export class DefaultApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('code','Required parameter requestParameters.code was null or undefined when calling getRoomByCode.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

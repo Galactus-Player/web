@@ -60,7 +60,7 @@ export class QueueApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('code','Required parameter requestParameters.code was null or undefined when calling addVideo.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -93,7 +93,7 @@ export class QueueApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('code','Required parameter requestParameters.code was null or undefined when calling playVideo.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -126,7 +126,7 @@ export class QueueApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('code','Required parameter requestParameters.code was null or undefined when calling removeVideo.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

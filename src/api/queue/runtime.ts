@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = "http://localhost/api".replace(/\/+$/, "");
+export const BASE_PATH = "http://galactus.live/api".replace(/\/+$/, "");
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
 

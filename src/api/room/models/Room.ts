@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { exists } from '../runtime';
+import { exists, mapValues } from '../runtime';
 /**
  * A room
  * @export
@@ -20,19 +20,19 @@ import { exists } from '../runtime';
  */
 export interface Room {
     /**
-     *
+     * 
      * @type {number}
      * @memberof Room
      */
     id?: number;
     /**
-     *
+     * 
      * @type {string}
      * @memberof Room
      */
     code?: string;
     /**
-     *
+     * 
      * @type {Date}
      * @memberof Room
      */
@@ -40,15 +40,15 @@ export interface Room {
 }
 
 export function RoomFromJSON(json: any): Room {
-    return RoomFromJSONTyped(json);
+    return RoomFromJSONTyped(json, false);
 }
 
-export function RoomFromJSONTyped(json: any): Room {
+export function RoomFromJSONTyped(json: any, ignoreDiscriminator: boolean): Room {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
-
+        
         'id': !exists(json, 'id') ? undefined : json['id'],
         'code': !exists(json, 'code') ? undefined : json['code'],
         'createdAt': !exists(json, 'createdAt') ? undefined : (new Date(json['createdAt'])),
@@ -63,7 +63,7 @@ export function RoomToJSON(value?: Room | null): any {
         return null;
     }
     return {
-
+        
         'id': value.id,
         'code': value.code,
         'createdAt': value.createdAt === undefined ? undefined : (value.createdAt.toISOString()),

@@ -17,11 +17,11 @@ import * as runtime from '../runtime';
 import {
     Room,
     RoomFromJSON,
-    // RoomToJSON,
+    RoomToJSON,
 } from '../models';
 
 /**
- * no description
+ * 
  */
 export class RoomApi extends runtime.BaseAPI {
 
@@ -29,7 +29,7 @@ export class RoomApi extends runtime.BaseAPI {
      * Create a new room
      */
     async addRoomRaw(): Promise<runtime.ApiResponse<Room>> {
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 

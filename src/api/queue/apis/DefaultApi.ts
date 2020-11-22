@@ -37,7 +37,7 @@ export class DefaultApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('code','Required parameter requestParameters.code was null or undefined when calling getQueue.');
         }
 
-        const queryParameters: runtime.HTTPQuery = {};
+        const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
