@@ -241,6 +241,11 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
     this.player = player;
   };
 
+  onClickRoomCopy = async () => {
+    const link = `https://galactus.live/room?code=${this.props.room}`
+    await navigator.clipboard.writeText(link);
+  }
+
   render() {
     const { playing, played, videoUrlQueue, duration } = this.state;
     const currentVideo = this.getCurVid();
@@ -281,10 +286,11 @@ class VideoPlayer extends React.Component<VideoPlayerProps, VideoPlayerState> {
                 <Heading>{room}</Heading>
                 <Box mr={2} />
                 <IconButton
-                  size="sm"
+                  size="md"
                   icon={<FiCopy />}
                   variant="outline"
                   rounded="full"
+                  onClick={this.onClickRoomCopy}
                 />
               </Flex>
             </Flex>
