@@ -1,3 +1,4 @@
+.openapi-generator/
 host_openapi_queue.yml
 host_openapi_room.yml
 openapi_queue.yml
