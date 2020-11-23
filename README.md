@@ -2,7 +2,7 @@
 Galactus web is the web frontend for the galactus service. It uses a microservice architecture to manage rooms, sync videos, and
 keep track of videos in a queue.
 The Galactus web interface uses [Next.js](https://nextjs.org/) for the frontend, and client code is generated using
-[OpenAPI](https://github.com/OAI/OpenAPI-Specification) specs that are written for two services, [queueservice](https://github.com/galactus-player/queueservice) and [roomservice](https://github.com/galactus-player/roomservice).
+[OpenAPI](https://github.com/OAI/OpenAPI-Specification) specs that are written for two services, [queueservice](https://github.com/galactus-player/queueservice) and [roomservice](https://github.com/galactus-player/roomservice). It also talks to the [sync-service](https://github.com/galactus-player/sync-service).
 
 # Running Galactus in Docker
 In order to run galactus, you need Docker and docker-compose. 
